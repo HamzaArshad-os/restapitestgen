@@ -1,0 +1,20 @@
+[
+  {
+    "title": "SuccessResponse",
+    "type": "object",
+    "properties": {
+      "s": {
+        "type": "number",
+        "description": "Status will always be `ok`.",
+        "enum": [
+          "ok"
+        ],
+        "example": "ok"
+      }
+    },
+    "required": [
+      "s"
+    ],
+    "additionalProperties": false
+  }
+]

@@ -1,0 +1,38 @@
+[
+  [
+    {
+      "instrument": false,
+      "side": "buy",
+      "orderType": "market"
+    },
+    {
+      "instrument": false,
+      "side": "sell",
+      "orderType": "stop"
+    }
+  ],
+  [
+    {
+      "instrument": "Excepteur veniam dolore",
+      "side": "sell",
+      "orderType": "limit"
+    },
+    {
+      "instrument": "incididunt",
+      "side": "sell",
+      "orderType": "limit"
+    }
+  ],
+  [
+    {
+      "instrument": "esse sit",
+      "side": "sell",
+      "orderType": true
+    },
+    {
+      "instrument": "officia",
+      "side": "sell",
+      "orderType": true
+    }
+  ]
+]

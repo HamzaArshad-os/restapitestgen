@@ -1,0 +1,86 @@
+[
+  {
+    "symbols": [
+      {
+        "f": [
+          "ipsum",
+          "do cillum",
+          "ea"
+        ],
+        "s": "nulla irure Lorem"
+      },
+      {
+        "f": [
+          "culpa tempor",
+          "velit qui id pariatur elit",
+          "labore in tempor aliqua commodo",
+          "dolor ut"
+        ],
+        "s": "nostrud laboris ut"
+      },
+      {
+        "f": [
+          "est eiusmod aliquip dolore Duis",
+          "dolor Duis exercitation in pariatur",
+          "in do Excepteur eu enim"
+        ],
+        "s": "fugiat"
+      },
+      {
+        "f": [
+          "eu ea in ipsum"
+        ],
+        "s": "eu do adipisicing"
+      }
+    ],
+    "fields": [
+      "brokerSymbol"
+    ]
+  },
+  {
+    "symbols": [
+      {
+        "f": [
+          "enim sit sed eu",
+          "nostrud",
+          "adipisicing",
+          "laborum aute",
+          "est nisi"
+        ],
+        "s": "Duis aliqua sunt quis"
+      },
+      {
+        "f": [
+          "minim deserunt est"
+        ],
+        "s": "qui ea mollit officia ullamco"
+      },
+      {
+        "f": [
+          "Lorem",
+          "deserunt ex tempor culpa",
+          "Duis exercitation cupidatat Lorem",
+          "fugiat dolor ipsum exercitation in",
+          "sint"
+        ],
+        "s": "non deserunt aliqua"
+      },
+      {
+        "f": [
+          "ea dolor in nostrud"
+        ],
+        "s": "consequat aute Ut dolor"
+      },
+      {
+        "f": [
+          "sunt",
+          "ea eiusmod occaecat"
+        ],
+        "s": "cillum anim nulla Ut"
+      }
+    ],
+    "fields": [
+      "brokerSymbol"
+    ]
+  }
+]

@@ -9,6 +9,7 @@
     "json-schema-ref-parser": "^9.0.9",
     "node": "^22.0.0",
     "path": "^0.12.7",
-    "statushttp": "^1.0.4"
+    "statushttp": "^1.0.4",
+    "url": "^0.11.3"
   }
 }

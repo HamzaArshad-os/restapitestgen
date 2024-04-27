@@ -1,0 +1,144 @@
+[
+  [
+    {
+      "symbols": [
+        {
+          "f": [
+            43979156.86718625,
+            -84965978.525182
+          ],
+          "s": "aute mollit"
+        }
+      ],
+      "fields": [
+        "brokerSymbol"
+      ]
+    },
+    {
+      "symbols": [
+        {
+          "f": [
+            -16250497.780889943,
+            12648422.06775345,
+            -94214749.67225035,
+            -94551955.00689232
+          ],
+          "s": "nulla pariatur et voluptate"
+        },
+        {
+          "f": [
+            -20482335.216316864,
+            42899024.0280959,
+            -9779795.971443802,
+            720841.2040823549
+          ],
+          "s": "proident officia elit"
+        },
+        {
+          "f": [
+            -76510879.5592166,
+            -36655834.42118381,
+            63994136.3529163
+          ],
+          "s": "non irure consectetur"
+        }
+      ],
+      "fields": [
+        "brokerSymbol"
+      ]
+    }
+  ],
+  [
+    {
+      "symbols": [
+        {
+          "f": [
+            "culpa nisi exercitation sunt",
+            "mollit proident et non officia",
+            "in aute dolor",
+            "incididunt Duis laboris aliquip commodo",
+            "proident Lorem magna culpa"
+          ],
+          "s": 55648411
+        }
+      ],
+      "fields": [
+        "brokerSymbol"
+      ]
+    },
+    {
+      "symbols": [
+        {
+          "f": [
+            "eu"
+          ],
+          "s": 97488159
+        },
+        {
+          "f": [
+            "ad Ut in",
+            "nisi esse laborum",
+            "officia deserunt sit enim ullamco",
+            "laborum",
+            "nostrud in esse ex eiusmod"
+          ],
+          "s": 95793559
+        },
+        {
+          "f": [
+            "Ut ipsum dolore labore fugiat",
+            "elit irure",
+            "fugiat mollit"
+          ],
+          "s": -80804042
+        }
+      ],
+      "fields": [
+        "brokerSymbol"
+      ]
+    }
+  ],
+  [
+    {
+      "symbols": [
+        {
+          "f": [
+            "aliqua",
+            "id",
+            "deserunt in dolor est"
+          ],
+          "s": "voluptate sit et ea"
+        }
+      ],
+      "fields": [
+        true
+      ]
+    },
+    {
+      "symbols": [
+        {
+          "f": [
+            "fugiat cupidatat do aliquip aliqua",
+            "enim sunt voluptate dolore nostrud",
+            "cupidatat laborum",
+            "dolor enim nostrud"
+          ],
+          "s": "cillum mollit enim dolore veniam"
+        },
+        {
+          "f": [
+            "dolore Lorem dolor non incididunt",
+            "ipsum exercitation non incididunt",
+            "irure velit dolore culpa",
+            "officia et sed irure",
+            "ut elit ea sint"
+          ],
+          "s": "dolore velit veniam"
+        }
+      ],
+      "fields": [
+        true
+      ]
+    }
+  ]
+]

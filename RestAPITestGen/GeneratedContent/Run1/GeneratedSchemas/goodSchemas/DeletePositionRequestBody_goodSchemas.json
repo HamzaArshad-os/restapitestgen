@@ -1,0 +1,13 @@
+{
+  "title": "DeletePositionRequestBody",
+  "type": "object",
+  "properties": {
+    "amount": {
+      "type": "number",
+      "description": "Amount to close. This property is used if supportPartialClosePosition flag is `true`."
+    }
+  },
+  "example": {
+    "amount": 5
+  }
+}

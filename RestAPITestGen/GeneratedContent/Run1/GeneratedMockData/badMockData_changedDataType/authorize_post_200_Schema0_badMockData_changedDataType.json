@@ -1,0 +1,38 @@
+[
+  [
+    {
+      "login": -24600051.168641597,
+      "password": "est",
+      "locale": "el"
+    },
+    {
+      "login": 67121899.78956115,
+      "password": "dolor elit",
+      "locale": "cs"
+    }
+  ],
+  [
+    {
+      "login": "sint velit elit incididunt ullamco",
+      "password": true,
+      "locale": "br"
+    },
+    {
+      "login": "fugiat",
+      "password": false,
+      "locale": "he_IL"
+    }
+  ],
+  [
+    {
+      "login": "culpa occaecat exercitation consectetur",
+      "password": "voluptate in id anim",
+      "locale": "el"
+    },
+    {
+      "login": "laborum",
+      "password": "in in dolor",
+      "locale": "kr"
+    }
+  ]
+]

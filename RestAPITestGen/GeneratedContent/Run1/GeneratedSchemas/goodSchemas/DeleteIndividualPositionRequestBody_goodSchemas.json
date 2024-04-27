@@ -1,0 +1,13 @@
+{
+  "title": "DeleteIndividualPositionRequestBody",
+  "type": "object",
+  "properties": {
+    "amount": {
+      "type": "number",
+      "description": "Amount to close. This property is used if supportPartialCloseIndividualPosition flag is `true`."
+    }
+  },
+  "example": {
+    "amount": 5
+  }
+}

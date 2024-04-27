@@ -1,0 +1,39 @@
+{
+  "type": "object",
+  "properties": {
+    "instrument": {
+      "description": "Broker instrument name.",
+      "type": "string",
+      "example": "BTCPERP"
+    },
+    "side": {
+      "description": "Current order side in the order ticket.",
+      "type": "string",
+      "enum": [
+        "buy",
+        "sell"
+      ]
+    },
+    "orderType": {
+      "description": "Current order type selected in the order ticket.",
+      "type": "string",
+      "enum": [
+        "market",
+        "stop",
+        "limit",
+        "stoplimit"
+      ]
+    },
+    "leverage": {
+      "description": "Leverage value set by user",
+      "type": "number",
+      "example": 25
+    }
+  },
+  "required": [
+    "instrument",
+    "side",
+    "orderType",
+    "leverage"
+  ]
+}

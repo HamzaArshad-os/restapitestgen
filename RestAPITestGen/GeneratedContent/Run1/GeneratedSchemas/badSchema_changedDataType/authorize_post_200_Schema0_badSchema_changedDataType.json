@@ -1,0 +1,158 @@
+[
+  {
+    "type": "object",
+    "properties": {
+      "login": {
+        "type": "number",
+        "description": "User login."
+      },
+      "password": {
+        "type": "string",
+        "description": "User password."
+      },
+      "locale": {
+        "title": "Locale",
+        "description": "Locale (language) id. This parameter is required for trading integration only.",
+        "type": "string",
+        "enum": [
+          "ar_AE",
+          "br",
+          "cs",
+          "de_DE",
+          "el",
+          "en",
+          "es",
+          "fa_IR",
+          "fr",
+          "he_IL",
+          "hu_HU",
+          "id",
+          "in",
+          "it",
+          "ja",
+          "kr",
+          "ms_MY",
+          "nl_NL",
+          "pl",
+          "ro",
+          "ru",
+          "sv_SE",
+          "th_TH",
+          "tr",
+          "uk",
+          "vi_VN",
+          "zh_CN",
+          "zh_TW"
+        ]
+      }
+    },
+    "required": [
+      "login",
+      "password"
+    ]
+  },
+  {
+    "type": "object",
+    "properties": {
+      "login": {
+        "type": "string",
+        "description": "User login."
+      },
+      "password": {
+        "type": "boolean",
+        "description": "User password."
+      },
+      "locale": {
+        "title": "Locale",
+        "description": "Locale (language) id. This parameter is required for trading integration only.",
+        "type": "string",
+        "enum": [
+          "ar_AE",
+          "br",
+          "cs",
+          "de_DE",
+          "el",
+          "en",
+          "es",
+          "fa_IR",
+          "fr",
+          "he_IL",
+          "hu_HU",
+          "id",
+          "in",
+          "it",
+          "ja",
+          "kr",
+          "ms_MY",
+          "nl_NL",
+          "pl",
+          "ro",
+          "ru",
+          "sv_SE",
+          "th_TH",
+          "tr",
+          "uk",
+          "vi_VN",
+          "zh_CN",
+          "zh_TW"
+        ]
+      }
+    },
+    "required": [
+      "login",
+      "password"
+    ]
+  },
+  {
+    "type": "object",
+    "properties": {
+      "login": {
+        "type": "string",
+        "description": "User login."
+      },
+      "password": {
+        "type": "string",
+        "description": "User password."
+      },
+      "locale": {
+        "title": "Locale",
+        "description": "Locale (language) id. This parameter is required for trading integration only.",
+        "type": "number",
+        "enum": [
+          "ar_AE",
+          "br",
+          "cs",
+          "de_DE",
+          "el",
+          "en",
+          "es",
+          "fa_IR",
+          "fr",
+          "he_IL",
+          "hu_HU",
+          "id",
+          "in",
+          "it",
+          "ja",
+          "kr",
+          "ms_MY",
+          "nl_NL",
+          "pl",
+          "ro",
+          "ru",
+          "sv_SE",
+          "th_TH",
+          "tr",
+          "uk",
+          "vi_VN",
+          "zh_CN",
+          "zh_TW"
+        ]
+      }
+    },
+    "required": [
+      "login",
+      "password"
+    ]
+  }
+]
