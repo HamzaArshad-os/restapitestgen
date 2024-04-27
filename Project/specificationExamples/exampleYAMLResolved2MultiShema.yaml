@@ -1,0 +1,93 @@
+openapi: 3.0.0
+info:
+  title: Sample API
+  version: 1.0.0
+servers:
+  - url: 'http://api.example.com/v1'
+paths:
+  /users:
+    get:
+      summary: Get a list of users
+      parameters:
+        - name: X-Api-Key
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of users
+          headers:
+            X-RateLimit-Limit:
+              description: The number of allowed requests in the current period
+              schema:
+                type: integer
+  /products:
+    get:
+      summary: Get a list of products
+      parameters:
+        - name: X-Session-Id
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of products
+          headers:
+            X-Cache-Hit:
+              description: Whether the response was served from cache
+              schema:
+                type: boolean
+  /orders:
+    get:
+      summary: Get a list of orders
+      parameters:
+        - name: X-Api-Key
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: X-Session-Id
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of orders
+          headers:
+            X-RateLimit-Limit:
+              description: The number of allowed requests in the current period
+              schema:
+                type: integer
+            X-Cache-Hit:
+              description: Whether the response was served from cache
+              schema:
+                type: boolean
+  /inventory:
+    get:
+      summary: Get the inventory status
+      parameters:
+        - name: X-Api-Key
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: X-Session-Id
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The inventory status
+          headers:
+            X-RateLimit-Limit:
+              description: The number of allowed requests in the current period
+              schema:
+                type: integer
+            X-Cache-Hit:
+              description: Whether the response was served from cache
+              schema:
+                type: boolean

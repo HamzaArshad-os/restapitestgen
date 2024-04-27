@@ -1,0 +1,92 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "API with various schema scenarios"
+    },
+    "paths": {
+      "/endpoint": {
+        "get": {
+          "parameters": [
+            {
+              "name": "arrayParam",
+              "in": "query",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "arrayProp": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "objectProp": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "additionalProps": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "patternProps": {
+                        "type": "object",
+                        "patternProperties": {
+                          "^S_": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "refProp": {
+                        "$ref": "#/components/schemas/MyObject"
+                      },
+                      "requiredProp": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "requiredProp"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "MyObject": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ]
+        }
+      }
+    }
+  }
+  

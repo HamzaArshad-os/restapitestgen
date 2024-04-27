@@ -1,0 +1,2629 @@
+openapi: '3.0.1'
+info:
+  title: 'Merchant Portal API'
+  version: 1.0.0
+servers:
+  - url: https://10.168.157.129:8091/api
+    description: SIT Development server
+  - url: https://10.168.157.133:8091/api
+    description: UAT Development server
+tags:
+  - name: User
+    description: User authentication, registration and profile operations
+  - name: Merchant
+    description: Merchant data operations
+  - name: Shop
+    description: Shop configuration operations
+  - name: POS
+    description: POS configuration operations
+  - name: Transaction
+    description: Payment enquiry and refund operations
+  - name: Billing QR Code
+    description: Billing QR Code generation and download operations
+  - name: FPS Proxy
+    description: FPS Proxy service operations
+  - name: Development
+    description: Development files and documents
+  - name: System
+    description: Internal system APIs
+paths:
+  /user/login:
+    post:
+      tags:
+        - User
+      summary: Login with username, password and reCaptcha verification response
+      operationId: userLogin
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                recaptchaVerification:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: '#/components/schemas/UserLoginPayload'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /user/login/{merchantProfileId}:
+    get:
+      tags:
+        - User
+      summary: Choose a merchant profile after login
+      operationId: userLoginChooseProfile
+      parameters:
+        - $ref: '#/components/parameters/merchantProfileId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        allOf:
+                          - $ref: '#/components/schemas/LoginUserProfileObj'
+                          - type: object
+                            properties:
+                              authToken:
+                                type: string
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /user/logout:
+    get:
+      tags:
+        - User
+      summary: Logout
+      operationId: userLogout
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /user/register:
+    parameters:
+      - in: query
+        name: token
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - User
+      summary: Get user information of a registration request
+      operationId: userRegisterInfo
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: '#/components/schemas/LoginUserProfileObj'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+    post:
+      tags:
+        - User
+      summary: New user registration
+      operationId: userRegisterNew
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/OtpAndPasswordObj'
+                - $ref: '#/components/schemas/UserProperties'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: '#/components/schemas/UserLoginPayload'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+    put:
+      tags:
+        - User
+      summary: Existing user register merchant profile
+      operationId: userRegisterAttach
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtpAndPasswordObj'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: '#/components/schemas/UserLoginPayload'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /user/register/otp:
+    get:
+      tags:
+        - User
+      summary: Send user registration OTP SMS
+      operationId: userRegisterOtp
+      security: []
+      parameters:
+        - in: query
+          name: token
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: otpType
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /user/password:
+    put:
+      tags:
+        - User
+      summary: Change password
+      operationId: userPasswordChange
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                  format: password
+                newPassword:
+                  type: string
+                  format: password
+              required:
+                - oldPassword
+                - newPassword
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+    get:
+      tags:
+        - User
+      summary: Get user information of a reset-password request
+      operationId: userPasswordInfo
+      security: []
+      parameters:
+        - in: query
+          name: token
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: '#/components/schemas/UserProfileObj'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+    post:
+      tags:
+        - User
+      summary: Reset password
+      operationId: userPasswordReset
+      security: []
+      parameters:
+        - in: query
+          name: token
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtpAndPasswordObj'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /user/password/email:
+    get:
+      tags:
+        - User
+      summary: Forget password - Send reset password email
+      operationId: userPasswordForget
+      security: []
+      parameters:
+        - in: query
+          name: username
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: recaptchaVerification
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /user/password/otp:
+    get:
+      tags:
+        - User
+      summary: Send reset password OTP SMS
+      operationId: userPasswordOtp
+      security: []
+      parameters:
+        - in: query
+          name: token
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /user/list:
+    get:
+      tags:
+        - User
+      summary: Get all users of the current merchant profile
+      operationId: userList
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          users:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/UserProfileObj'
+                                - $ref: '#/components/schemas/UserRoleShopsObj'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /user/profile:
+    get:
+      tags:
+        - User
+      summary: Get the current user profile
+      operationId: userProfileInfo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        allOf:
+                          - $ref: '#/components/schemas/UserProfileObj'
+                          - $ref: '#/components/schemas/UserRoleShopsObj'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /user/config/{userId}:
+    parameters:
+      - $ref: '#/components/parameters/userId'
+    put:
+      tags:
+        - User
+      summary: Update an user configuration on the current merchant profile
+      operationId: userConfigUpdate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRoleShopIdsObj'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+    delete:
+      tags:
+        - User
+      summary: Delete an user configuration on the current merchant profile
+      operationId: userConfigDelete
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /user/invitation:
+    get:
+      tags:
+        - User
+      summary: Get all pending invitation of the current merchant profile
+      operationId: userInvitationList
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          invitations:
+                            type: array
+                            items:
+                              allOf:
+                                - type: object
+                                  properties:
+                                    email:
+                                      type: string
+                                    mobileNumber:
+                                      type: string
+                                - $ref: '#/components/schemas/TimestampObj'
+                                - $ref: '#/components/schemas/UserRoleShopsObj'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+    post:
+      tags:
+        - User
+      summary: Invite an user to the current merchant profile
+      operationId: userInvitationCreate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - type: object
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                    mobileNumber:
+                      type: string
+                      pattern: '^[456789]\d{7}$'
+                  required:
+                    - email
+                    - mobileNumber
+                - $ref: '#/components/schemas/UserRoleShopIdsObj'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+    delete:
+      tags:
+        - User
+      summary: Delete a pending user invitation from the current merchant profile
+      operationId: userInvitationDelete
+      parameters:
+        - in: query
+          name: email
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /merchant/profile:
+    get:
+      tags:
+        - Merchant
+      summary: Get the current merchant profile
+      operationId: merchantProfileInfo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        allOf:
+                          - $ref: '#/components/schemas/MerchantProfileObj'
+                          - type: object
+                            properties:
+                              paymentMethodTypes:
+                                type: array
+                                items:
+                                  type: string
+                              paymentNetworkNames:
+                                type: array
+                                items:
+                                  type: string
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /merchant/paymentMethod:
+    get:
+      tags:
+        - Merchant
+      summary: Get the merchant payment method configuration
+      operationId: merchantPaymentMethodInfo
+      parameters:
+        - in: query
+          name: paymentMethodTypes
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          paymentMethods:
+                            type: array
+                            items:
+                              allOf:
+                                - type: object
+                                  properties:
+                                    paymentMethodType:
+                                      type: string
+                                    apps:
+                                      type: array
+                                      items:
+                                        allOf:
+                                          - type: object
+                                            properties:
+                                              appId:
+                                                type: string
+                                              merchantId:
+                                                type: string
+                                          - $ref: '#/components/schemas/PaymentMethodProperties'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /merchant/paymentNetwork:
+    get:
+      tags:
+        - Merchant
+      summary: Get the merchant payment network configuration
+      operationId: merchantPaymentNetworkInfo
+      parameters:
+        - in: query
+          name: paymentNetworkNames
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          paymentNetworks:
+                            type: array
+                            items:
+                              allOf:
+                                - type: object
+                                  properties:
+                                    paymentNetworkId:
+                                      type: integer
+                                      format: int64
+                                    paymentNetworkName:
+                                      type: string
+                                    paymentType:
+                                      type: string
+                                    paymentNature:
+                                      type: string
+                                    networkConfigs:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          merchantId:
+                                            type: string
+                                          externalMid:
+                                            type: string
+                                          remark:
+                                            type: string
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /merchant/fd/otb:
+    get:
+      tags:
+        - Merchant
+      summary: Get Fiserv OTB balance
+      operationId: merchantFdOtb
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          otb:
+                            type: number
+                            format: double
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /merchant/bnpl/profile:
+    get:
+      tags:
+        - Merchant
+      summary: Get Buy Now Pay Later profile
+      operationId: merchantBnplInfo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          merchantId:
+                            type: string
+                          chineseName:
+                            type: string
+                          englishName:
+                            type: string
+                          shortName:
+                            type: string
+                          accountStatus:
+                            type: string
+                          owner:
+                            type: string
+                          regAddress01:
+                            type: string
+                          regAddress02:
+                            type: string
+                          regAddress03:
+                            type: string
+                          regAddress04:
+                            type: string
+                          contactPerson:
+                            type: string
+                          contactNo:
+                            type: string
+                          contactEmail:
+                            type: string
+                          isInternalMerchant:
+                            type: string
+                          mdrTypeOne:
+                            type: string
+                          mdrRateOne:
+                            type: string
+                          refundRate:
+                            type: string
+                          discountType:
+                            type: string
+                          discountRate:
+                            type: string
+                          discountStartDate:
+                            type: string
+                          discountEndDate:
+                            type: string
+                          unsettleBalance:
+                            type: string
+                          settleBalance:
+                            type: string
+                          chineseDescription:
+                            type: string
+                          englishDescription:
+                            type: string
+                          otherTerms:
+                            type: string
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /shop:
+    get:
+      tags:
+        - Shop
+      summary: Get all shops of the current merchant profile
+      operationId: shopList
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          shops:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/ShopObj'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+    post:
+      tags:
+        - Shop
+      summary: Create a new shop
+      operationId: shopCreate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShopProperties'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          shopId:
+                            type: string
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /shop/{shopId}:
+    parameters:
+      - $ref: '#/components/parameters/shopId'
+    get:
+      tags:
+        - Shop
+      summary: Get shop information
+      operationId: shopInfo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          shop:
+                            $ref: '#/components/schemas/ShopObj'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+    put:
+      tags:
+        - Shop
+      summary: Update shop information
+      operationId: shopUpdate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShopProperties'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+    delete:
+      tags:
+        - Shop
+      summary: Delete a shop
+      operationId: shopDelete
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /shop/{shopId}/user:
+    get:
+      tags:
+        - Shop
+      summary: Get users of a shop
+      operationId: shopUserList
+      parameters:
+        - $ref: '#/components/parameters/shopId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          users:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/UserBaseObj'
+                                - $ref: '#/components/schemas/UserRoleProperties'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /shop/{shopId}/user/{userId}:
+    delete:
+      tags:
+        - Shop
+      summary: Delete a user from a shop
+      operationId: shopDeleteUser
+      parameters:
+        - $ref: '#/components/parameters/shopId'
+        - $ref: '#/components/parameters/userId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /pos:
+    get:
+      tags:
+        - POS
+      summary: Get POS list of the current merchant profile
+      operationId: posList
+      parameters:
+        - $ref: '#/components/parameters/pageNumber'
+        - $ref: '#/components/parameters/pageSize'
+        - in: query
+          name: shopId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - $ref: '#/components/schemas/PageResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          poses:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/PosObj'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /pos/{posId}:
+    put:
+      tags:
+        - POS
+      summary: Update POS status
+      operationId: posUpdate
+      parameters:
+        - $ref: '#/components/parameters/posId'
+        - in: query
+          name: pin
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: status
+          description: >
+            Value:
+             * `A` - Active
+             * `B` - Blocked
+          schema:
+            type: string
+            enum: [A, B]
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /pos/{posId}/pin:
+    parameters:
+      - $ref: '#/components/parameters/posId'
+    post:
+      tags:
+        - POS
+      summary: Setup POS PIN
+      operationId: posPinSetup
+      parameters:
+        - in: query
+          name: pin
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+    put:
+      tags:
+        - POS
+      summary: Change POS PIN
+      operationId: posPinChange
+      parameters:
+        - in: query
+          name: oldPin
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: newPin
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /pos/{posId}/refundPin:
+    parameters:
+      - $ref: '#/components/parameters/posId'
+    post:
+      tags:
+        - POS
+      summary: Setup POS refund PIN
+      operationId: posRefundPinSetup
+      parameters:
+        - in: query
+          name: pin
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+    put:
+      tags:
+        - POS
+      summary: Change POS refund PIN
+      operationId: posRefundPinChange
+      parameters:
+        - in: query
+          name: oldPin
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: newPin
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /pos/{posId}/refundBlock:
+    put:
+      tags:
+        - POS
+      summary: Toggle blocked and unblock state of refund operation
+      operationId: posRefundToggleBlock
+      parameters:
+        - $ref: '#/components/parameters/posId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /pos/{posId}/certificate:
+    get:
+      tags:
+        - POS
+      summary: Download POS certificate file
+      operationId: posCertificateFile
+      parameters:
+        - $ref: '#/components/parameters/posId'
+        - in: query
+          name: pin
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Download csv file
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: binary
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /transaction/summary:
+    get:
+      tags:
+        - Transaction
+      summary: Get transaction summary
+      operationId: transactionSummary
+      parameters:
+        - in: query
+          name: months
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 12
+            default: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          summaries:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                date:
+                                  type: string
+                                  format: date
+                                hour:
+                                  type: string
+                                  example: '00'
+                                channel:
+                                  type: string
+                                shopId:
+                                  type: string
+                                paymentMeans:
+                                  type: string
+                                type:
+                                  type: string
+                                amount:
+                                  type: number
+                                  format: double
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /transaction/cis:
+    get:
+      tags:
+        - Transaction
+      summary: Query transaction history record from CIS
+      operationId: transactionCis
+      parameters:
+        - $ref: '#/components/parameters/pageNumber'
+        - $ref: '#/components/parameters/pageSize'
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+          required: true
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+          required: true
+        - in: query
+          name: shopId
+          schema:
+            type: string
+        - in: query
+          name: posId
+          schema:
+            type: string
+        - in: query
+          name: merTradeNo
+          schema:
+            type: string
+        - in: query
+          name: tradeStatus
+          schema:
+            type: string
+        - in: query
+          name: isFpsA2a
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - $ref: '#/components/schemas/PageResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          transactions:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                tradeNo:
+                                  type: string
+                                createDate:
+                                  type: string
+                                totalPrice:
+                                  type: string
+                                txnType:
+                                  type: string
+                                currency:
+                                  type: string
+                                subPartnerId:
+                                  type: string
+                                subMerTradeNo:
+                                  type: string
+                                outTradeNo:
+                                  type: string
+                                subject:
+                                  type: string
+                                tradeStatus:
+                                  type: string
+                                notifyStatus:
+                                  type: string
+                                errorCode:
+                                  type: string
+                                storeId:
+                                  type: string
+                                terminalId:
+                                  type: string
+                                txnSrc:
+                                  type: string
+                                paymentChannel:
+                                  type: string
+                                fsa:
+                                  type: string
+                                fdAccountId:
+                                  type: string
+                                fpsAccountId:
+                                  type: string
+                                fpsPaymentCategoryPurpose:
+                                  type: string
+                                fpsPaymentPurposeCode:
+                                  type: string
+                                fpsReferenceId:
+                                  type: string
+                                fpsE2EId:
+                                  type: string
+                                fpsPayerName:
+                                  type: string
+                                tapngoPayerName:
+                                  type: string
+                                tapngoPayerMobileNum:
+                                  type: string
+                                clearingCode:
+                                  type: string
+                                refundStatus:
+                                  type: string
+                                refundTradeNo:
+                                  type: string
+                                refundable:
+                                  type: boolean
+                                concessionType:
+                                  type: string
+                                cvsTransaction:
+                                  type: string
+                                loyaltyType:
+                                  type: string
+                                loyaltyProgramId:
+                                  type: string
+                                loyaltyCusMemberId:
+                                  type: string
+                                loyaltyMerPartnerId:
+                                  type: string
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /transaction/cis/file:
+    get:
+      tags:
+        - Transaction
+      summary: Download transaction history record from CIS
+      operationId: transactionCisFile
+      parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+          required: true
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+          required: true
+        - in: query
+          name: shopId
+          schema:
+            type: string
+        - in: query
+          name: posId
+          schema:
+            type: string
+        - in: query
+          name: merTradeNo
+          schema:
+            type: string
+        - in: query
+          name: tradeStatus
+          schema:
+            type: string
+        - in: query
+          name: isFpsA2a
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Download csv file
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /transaction/cis/{merTradeNo}:
+    delete:
+      tags:
+        - Transaction
+      summary: Make a transaction refund
+      operationId: transactionCisRefund
+      parameters:
+        - in: path
+          name: merTradeNo
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: isFpsA2a
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /transaction/hqpay:
+    get:
+      tags:
+        - Transaction
+      summary: Query transaction history record from HQPay
+      operationId: transactionHqpay
+      parameters:
+        - $ref: '#/components/parameters/pageNumber'
+        - $ref: '#/components/parameters/pageSize'
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+          required: true
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+          required: true
+        - in: query
+          name: paymentType
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: shopId
+          schema:
+            type: string
+        - in: query
+          name: tradeStatuses
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - $ref: '#/components/schemas/PageResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          transactions:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                tradeNo:
+                                  type: string
+                                createDate:
+                                  type: string
+                                txnType:
+                                  type: string
+                                merTradeNo:
+                                  type: string
+                                businessNo:
+                                  type: string
+                                orderNo:
+                                  type: string
+                                orderStatus:
+                                  type: string
+                                currency:
+                                  type: string
+                                orderAmount:
+                                  type: string
+                                tipsAmount:
+                                  type: string
+                                totalPrice:
+                                  type: string
+                                parentMerchantId:
+                                  type: string
+                                merchantId:
+                                  type: string
+                                extMerchantId:
+                                  type: string
+                                merchantName:
+                                  type: string
+                                notifyStatus:
+                                  type: string
+                                storeNo:
+                                  type: string
+                                machineNo:
+                                  type: string
+                                fsa:
+                                  type: string
+                                clearingCode:
+                                  type: string
+                                refundSerialNo:
+                                  type: string
+                                errorCode:
+                                  type: string
+                                refundable:
+                                  type: string
+                                coupon:
+                                  type: string
+                                settlementAmount:
+                                  type: string
+                                mdr:
+                                  type: string
+                                batchNum:
+                                  type: string
+                                reconStatus:
+                                  type: string
+                                cardType:
+                                  type: string
+                                entryMode:
+                                  type: string
+                                txnDateTime:
+                                  type: string
+                                rrn:
+                                  type: string
+                                authCode:
+                                  type: string
+                                acquirerID:
+                                  type: string
+                                sn:
+                                  type: string
+                                paymentType:
+                                  type: string
+                                cardHolderName:
+                                  type: string
+                                pan:
+                                  type: string
+                                extraTxnData:
+                                  type: string
+                                traceNum:
+                                  type: string
+                                invoiceNum:
+                                  type: string
+                                txnID:
+                                  type: string
+                                ecrRefNum:
+                                  type: string
+                                ecrResponseCode:
+                                  type: string
+                                ecrResponseText:
+                                  type: string
+                                terminalId:
+                                  type: string
+                                loyaltyType:
+                                  type: string
+                                loyaltyProgramId:
+                                  type: string
+                                loyaltyCusMemberId:
+                                  type: string
+                                loyaltyMerPartnerId:
+                                  type: string
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /transaction/hqpay/file:
+    get:
+      tags:
+        - Transaction
+      summary: Download transaction history record from HQPay
+      operationId: transactionHqpayFile
+      parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+          required: true
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+          required: true
+        - in: query
+          name: paymentType
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: shopId
+          schema:
+            type: string
+        - in: query
+          name: tradeStatuses
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: Download csv file
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /transaction/bnpl:
+    get:
+      tags:
+        - Transaction
+      summary: Query BNPL transaction history record
+      operationId: transactionBnpl
+      parameters:
+        - $ref: '#/components/parameters/pageNumber'
+        - $ref: '#/components/parameters/pageSize'
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+          required: true
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+          required: true
+        - in: query
+          name: shopId
+          schema:
+            type: string
+        - in: query
+          name: tradeNo
+          schema:
+            type: string
+        - in: query
+          name: tradeStatuses
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - $ref: '#/components/schemas/PageResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          isInternalMerchant:
+                            type: string
+                          transactions:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                tradeNo:
+                                  type: string
+                                orderNo:
+                                  type: string
+                                orderStatus:
+                                  type: string
+                                refundNumber:
+                                  type: string
+                                orderAmount:
+                                  type: string
+                                customerId:
+                                  type: string
+                                merchantName:
+                                  type: string
+                                storeId:
+                                  type: string
+                                refundAmount:
+                                  type: string
+                                discountAmount:
+                                  type: string
+                                merchantDiscountAmount:
+                                  type: string
+                                afterDiscountAmount:
+                                  type: string
+                                orderType:
+                                  type: string
+                                merchantId:
+                                  type: string
+                                transactionDate:
+                                  type: string
+                                orderFee:
+                                  type: string
+                                refundFee:
+                                  type: string
+                                totalFee:
+                                  type: string
+                                mdr:
+                                  type: string
+                                coupon:
+                                  type: string
+                                currency:
+                                  type: string
+                                terminalId:
+                                  type: string
+                                settlementAmount:
+                                  type: string
+                                errorCode:
+                                  type: string
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /transaction/bnpl/file:
+    get:
+      tags:
+        - Transaction
+      summary: Download BNPL transaction history record
+      operationId: transactionBnplFile
+      parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+          required: true
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+          required: true
+        - in: query
+          name: shopId
+          schema:
+            type: string
+        - in: query
+          name: tradeNo
+          schema:
+            type: string
+        - in: query
+          name: tradeStatuses
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: Download csv file
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /transaction/bnpl/{orderNo}:
+    delete:
+      tags:
+        - Transaction
+      summary: Make a BNPL transaction refund
+      operationId: transactionBnplRefund
+      parameters:
+        - in: path
+          name: orderNo
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: refundAmount
+          schema:
+            type: number
+            format: double
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /billqrc/request:
+    get:
+      tags:
+        - Billing QR Code
+      summary: Get Billing QR Code generation request list
+      operationId: billQrcRequestList
+      parameters:
+        - $ref: '#/components/parameters/pageNumber'
+        - $ref: '#/components/parameters/pageSize'
+        - in: query
+          name: ticketNo
+          schema:
+            type: integer
+            format: int64
+        - in: query
+          name: statuses
+          schema:
+            type: array
+            items:
+              type: string
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - $ref: '#/components/schemas/PageResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          requests:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                ticketNo:
+                                  type: integer
+                                  format: int64
+                                appId:
+                                  type: string
+                                merchantId:
+                                  type: string
+                                requestDate:
+                                  type: string
+                                  format: date-time
+                                updateDate:
+                                  type: string
+                                  format: date-time
+                                remarks:
+                                  type: string
+                                uploadFilename:
+                                  type: string
+                                status:
+                                  type: string
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+    post:
+      tags:
+        - Billing QR Code
+      summary: Submit Billing QR Code generation request
+      operationId: billQrcRequestCreate
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          ticketNo:
+                            type: integer
+                            format: int64
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /billqrc/request/template:
+    get:
+      tags:
+        - Billing QR Code
+      summary: Get Billing QR Code generation request template file
+      operationId: billQrcRequestTemplate
+      responses:
+        '200':
+          description: The template file in csv format
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /billqrc/request/{ticketNo}:
+    get:
+      tags:
+        - Billing QR Code
+      summary: Get Billing QR Code generation result file
+      operationId: billQrcRequestResult
+      parameters:
+        - name: ticketNo
+          in: path
+          description: Ticket number
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '200':
+          description: The QR Code result zip file
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /fpsproxy:
+    get:
+      tags:
+        - FPS Proxy
+      summary: Get registered FPS Proxy list
+      operationId: fpsProxyList
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          proxies:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/FpsProxyProperties'
+                                - type: object
+                                  properties:
+                                    status:
+                                      type: string
+                                    createDate:
+                                      type: string
+                                      format: date-time
+                                    effectiveDate:
+                                      type: string
+                                      format: date-time
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /fpsproxy/{fpsProxyType}/otp:
+    get:
+      tags:
+        - FPS Proxy
+      summary: Send registration OTP via SMS or eMail
+      operationId: fpsProxyOtp
+      parameters:
+        - in: path
+          name: fpsProxyType
+          schema:
+            type: string
+            enum: [MOBILE, EMAIL]
+          required: true
+        - in: query
+          name: fpsProxyId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /fpsproxy/{fpsProxyType}:
+    parameters:
+      - in: path
+        name: fpsProxyType
+        schema:
+          type: string
+          enum: [MOBILE, EMAIL]
+        required: true
+    post:
+      tags:
+        - FPS Proxy
+      summary: Register a new FPS Proxy
+      operationId: fpsProxyRegister
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                otp:
+                  type: string
+                fpsProxyId:
+                  type: string
+              required:
+                - otp
+                - fpsProxyId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+    delete:
+      tags:
+        - FPS Proxy
+      summary: De-register a FPS Proxy
+      operationId: fpsProxyDeregister
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /development/{fileType}:
+    get:
+      tags:
+        - Development
+      summary: List development related files
+      operationId: developmentFileList
+      parameters:
+        - in: path
+          name: fileType
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      payload:
+                        type: object
+                        properties:
+                          files:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                fileId:
+                                  type: integer
+                                  format: int64
+                                platform:
+                                  type: string
+                                version:
+                                  type: string
+                                title:
+                                  type: string
+                                description:
+                                  type: string
+                                createDate:
+                                  type: string
+                                  format: date-time
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /development/{fileType}/{fileId}:
+    get:
+      tags:
+        - Development
+      summary: Download development file
+      operationId: developmentFileDownload
+      parameters:
+        - in: path
+          name: fileType
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: fileId
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '200':
+          description: Download development file
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+  /system/merchant/profile/{merchantProfileId}:
+    get:
+      tags:
+        - System
+      summary: Get a merchant profile
+      operationId: systemGetMerchantProfile
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/merchantProfileId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultCode:
+                    type: string
+                  resultMsg:
+                    type: string
+                  payload:
+                    type: object
+                    properties:
+                      merchantProfileId:
+                        type: string
+                      prodMerchantId:
+                        type: string
+                      status:
+                        type: string
+                      currency:
+                        type: array
+                        items:
+                          type: string
+                      accountId:
+                        type: string
+                      paymentInterface:
+                        type: string
+                      fpsId:
+                        type: string
+                      hkdBizAccountId:
+                        type: string
+                      cnyBizAccountId:
+                        type: string
+        '500':
+          $ref: '#/components/responses/InternalError'
+        default:
+          $ref: '#/components/responses/Problem'
+components:
+  schemas:
+    BaseResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        code:
+          type: string
+          default: '0000'
+        message:
+          type: string
+          default: Success
+    ProblemResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: false
+        code:
+          type: string
+          example: '1000'
+        message:
+          type: string
+          example: Problem message
+    InternalErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: false
+        code:
+          type: string
+          default: '9999'
+        message:
+          type: string
+          example: Error message
+    PageResponse:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+    TimestampObj:
+      type: object
+      properties:
+        createTimestamp:
+          type: string
+          format: date-time
+        updateTimestamp:
+          type: string
+          format: date-time
+    PersistentBaseObj:
+      allOf:
+        - type: object
+          properties:
+            status:
+              type: string
+        - $ref: '#/components/schemas/TimestampObj'
+    UserLoginPayload:
+      allOf:
+        - $ref: '#/components/schemas/UserProfileObj'
+        - type: object
+          properties:
+            userMerchantProfiles:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserMerchantProfileObj'
+            authToken:
+              type: string
+    OtpAndPasswordObj:
+      type: object
+      properties:
+        otp:
+          type: string
+        password:
+          type: string
+          format: password
+      required:
+        - otp
+        - password
+    UserProperties:
+      type: object
+      properties:
+        displayUsername:
+          type: string
+        mobileNumber:
+          type: string
+          pattern: '^[456789]\d{7}$'
+      required:
+        - displayUsername
+        - mobileNumber
+    UserRoleProperties:
+      type: object
+      properties:
+        roleType:
+          type: string
+        alias:
+          type: string
+      required:
+        - roleType
+        - alias
+    UserRoleShopIdsObj:
+      allOf:
+        - $ref: '#/components/schemas/UserRoleProperties'
+        - type: object
+          properties:
+            shops:
+              type: array
+              items:
+                type: object
+                properties:
+                  shopId:
+                    type: string
+                required:
+                  - shopId
+          required:
+            - shops
+    UserRoleShopsObj:
+      allOf:
+        - $ref: '#/components/schemas/UserRoleProperties'
+        - type: object
+          properties:
+            shops:
+              type: array
+              items:
+                $ref: '#/components/schemas/ShopNameObj'
+    UserBaseObj:
+      allOf:
+        - type: object
+          properties:
+            userId:
+              type: integer
+              format: int64
+            username:
+              type: string
+        - $ref: '#/components/schemas/TimestampObj'
+    UserProfileObj:
+      allOf:
+        - $ref: '#/components/schemas/UserBaseObj'
+        - $ref: '#/components/schemas/UserProperties'
+    UserMerchantProfileObj:
+      allOf:
+        - type: object
+          properties:
+            merchantProfileId:
+              type: string
+            merchantNameEn:
+              type: string
+            merchantNameZh:
+              type: string
+            merchantType:
+              type: string
+        - $ref: '#/components/schemas/UserRoleProperties'
+    LoginUserProfileObj:
+      allOf:
+        - $ref: '#/components/schemas/UserProfileObj'
+        - type: object
+          properties:
+            userMerchantProfile:
+              $ref: '#/components/schemas/UserMerchantProfileObj'
+            shops:
+              type: array
+              items:
+                $ref: '#/components/schemas/ShopNameObj'
+    MerchantProfileBaseObj:
+      allOf:
+        - type: object
+          properties:
+            merchantProfileId:
+              type: string
+            type:
+              type: string
+            merchantNameEn:
+              type: string
+            merchantNameZh:
+              type: string
+            contactAddress:
+              type: string
+            contactAddress2:
+              type: string
+            contactAddress3:
+              type: string
+            contactAddress4:
+              type: string
+            paymentInterface:
+              type: string
+        - $ref: '#/components/schemas/PersistentBaseObj'
+    MerchantProfileProperties:
+      type: object
+      properties:
+        contactName:
+          type: string
+        contactNumber:
+          type: string
+        email:
+          type: string
+        merchantBr:
+          type: string
+        merchantCi:
+          type: string
+        remark:
+          type: string
+        fdCardNumber:
+          type: string
+        contractStartDate:
+          type: string
+          format: date-time
+        contractMonthPeriod:
+          type: integer
+          format: int32
+    MerchantProfileObj:
+      allOf:
+        - $ref: '#/components/schemas/MerchantProfileBaseObj'
+        - $ref: '#/components/schemas/MerchantProfileProperties'
+    ShopProperties:
+      type: object
+      properties:
+        shopNameEn:
+          type: string
+        shopNameZh:
+          type: string
+        addressLine1:
+          type: string
+        addressLine2:
+          type: string
+        addressLine3:
+          type: string
+      required:
+        - shopNameEn
+        - shopNameZh
+    ShopNameObj:
+      type: object
+      properties:
+        shopId:
+          type: string
+        shopNameEn:
+          type: string
+        shopNameZh:
+          type: string
+    ShopObj:
+      allOf:
+        - type: object
+          properties:
+            shopId:
+              type: string
+        - $ref: '#/components/schemas/ShopProperties'
+        - $ref: '#/components/schemas/PersistentBaseObj'
+    PosProperties:
+      type: object
+      properties:
+        serialNumber:
+          type: string
+        fsa:
+          type: string
+        loyaltyProgramEnabled:
+          type: boolean
+        hasRefundPin:
+          type: boolean
+        refundPinBlocked:
+          type: boolean
+        certificate:
+          type: string
+        mode:
+          type: object
+          properties:
+            topUp:
+              type: boolean
+            payment:
+              type: boolean
+            checkBalance:
+              type: boolean
+            admission:
+              type: boolean
+      required:
+        - serialNumber
+        - fsa
+        - mode
+    PosObj:
+      allOf:
+        - type: object
+          properties:
+            posId:
+              type: string
+        - $ref: '#/components/schemas/PosProperties'
+        - $ref: '#/components/schemas/PersistentBaseObj'
+    PaymentMethodProperties:
+      type: object
+      properties:
+        nameEn:
+          type: string
+        nameZh:
+          type: string
+        apiKey:
+          type: string
+        publicKey:
+          type: string
+        ipWhitelist:
+          type: array
+          items:
+            type: object
+            properties:
+              ip:
+                type: string
+              remark:
+                type: string
+    FpsProxyProperties:
+      type: object
+      properties:
+        fpsProxyType:
+          type: string
+        fpsProxyId:
+          type: string
+      required:
+        - fpsProxyType
+        - fpsProxyId
+  parameters:
+    pageNumber:
+      name: pageNumber
+      in: query
+      required: true
+      schema:
+        type: integer
+        format: int32
+    pageSize:
+      name: pageSize
+      in: query
+      required: true
+      schema:
+        type: integer
+        format: int32
+    merchantProfileId:
+      name: merchantProfileId
+      in: path
+      description: Merchant Profile ID
+      required: true
+      schema:
+        type: string
+    userId:
+      name: userId
+      in: path
+      description: User ID
+      required: true
+      schema:
+        type: integer
+        format: int64
+    shopId:
+      name: shopId
+      in: path
+      description: Shop ID
+      required: true
+      schema:
+        type: string
+    posId:
+      name: posId
+      in: path
+      description: POS ID
+      required: true
+      schema:
+        type: string
+  responses:
+    Problem:
+      description: Other problem
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemResponse'
+    InternalError:
+      description: Unexpected error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/InternalErrorResponse'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+security:
+  - BearerAuth: []

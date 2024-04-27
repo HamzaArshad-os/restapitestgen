@@ -1,0 +1,572 @@
+---
+openapi: 3.0.0
+info:
+  title: Create a Blog Engine
+  description: "Full-Stack Web Development 22/23 Assignment (6G5Z0042): Build a blog engine. For help on getting started, refer to the assignment brief, teaching material, or contact Ash."
+  contact:
+    name: Ashley Williams
+    email: ashley.williams@mmu.ac.uk
+  version: 1.0.0
+servers:
+  - url: https://virtserver.swaggerhub.com/zedrem/FullStack-WebDev-Assignment/1.0.0
+    description: SwaggerHub API Auto Mocking
+paths:
+  /users:
+    get:
+      tags:
+        - User Management
+      summary: View a list of all users
+      description: |
+        Will return a list of all users within the system.
+      operationId: getUsers
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Users"
+        "401":
+          description: Unauthorised
+        "500":
+          description: Server Error
+      security:
+        - User: []
+    post:
+      tags:
+        - User Management
+      summary: Add a new user
+      description: |
+        Will create a new user in the system.
+      operationId: addUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddUser"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddUserResponse"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorised
+        "500":
+          description: Server Error
+      security:
+        - User: []
+  /users/{user_id}:
+    delete:
+      tags:
+        - User Management
+      summary: Delete a user
+      description: |
+        Delete a user from the system.
+      operationId: deleteUser
+      parameters:
+        - name: user_id
+          in: path
+          description: A unique integer ID for identifying a User
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorised
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      deprecated: true
+      security:
+        - User: []
+  /login:
+    post:
+      tags:
+        - User Management
+      summary: Log into an account
+      description: |
+        Will log a user into their account.
+      operationId: loginUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginUser"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          description: Invalid email/password supplied
+        "500":
+          description: Server Error
+  /logout:
+    post:
+      tags:
+        - User Management
+      summary: Log out of an account
+      description: |
+        Will log a user out of their account.
+      operationId: logoutUser
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorised
+        "500":
+          description: Server Error
+      security:
+        - User: []
+  /articles:
+    get:
+      tags:
+        - Article Management
+      summary: Get a list of all articles
+      description: |
+        Will return a list of all articles, ordered by date (newest first).
+      operationId: getArticles
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Articles"
+        "500":
+          description: Server Error
+    post:
+      tags:
+        - Article Management
+      summary: Add a new article
+      description: |
+        Add a new article into the system.
+      operationId: addArticle
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddArticle"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddArticleResponse"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorised
+        "500":
+          description: Server Error
+      security:
+        - User: []
+  /articles/{article_id}:
+    get:
+      tags:
+        - Article Management
+      summary: Get a single article
+      description: |
+        Retrieves the information for a single article.
+      operationId: getArticle
+      parameters:
+        - name: article_id
+          in: path
+          description: A unique integer ID for identifying a Article
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SingleArticle"
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+    delete:
+      tags:
+        - Article Management
+      summary: Delete an article
+      description: |
+        Deletes an article from the system.
+      operationId: deleteArticle
+      parameters:
+        - name: article_id
+          in: path
+          description: A unique integer ID for identifying a Article
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorised
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      security:
+        - User: []
+    patch:
+      tags:
+        - Article Management
+      summary: Update an article
+      description: |
+        Update an article (published date will stay the same).
+      operationId: updateArticle
+      parameters:
+        - name: article_id
+          in: path
+          description: A unique integer ID for identifying a Article
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateArticle"
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorised
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      security:
+        - User: []
+  /articles/{article_id}/comments:
+    get:
+      tags:
+        - Comment Management
+      summary: Get a list of all comments for an article
+      description: |
+        Get a list of comments for a given article.
+      operationId: getComments
+      parameters:
+        - name: article_id
+          in: path
+          description: A unique integer ID for identifying a Article
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comments"
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+    post:
+      tags:
+        - Comment Management
+      summary: Add a new comment to an article
+      description: |
+        Add a new comment to an article.
+      operationId: addComment
+      parameters:
+        - name: article_id
+          in: path
+          description: A unique integer ID for identifying a Article
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddComment"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddCommentResponse"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorised
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+  /comments/{comment_id}:
+    delete:
+      tags:
+        - Comment Management
+      summary: Delete a comment
+      description: |
+        Delete a comment from an article.
+      operationId: deleteComment
+      parameters:
+        - name: comment_id
+          in: path
+          description: A unique integer ID for identifying a Comment
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorised
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      security:
+        - User: []
+components:
+  schemas:
+    User:
+      required:
+        - email
+        - first_name
+        - last_name
+        - user_id
+      type: object
+      properties:
+        user_id:
+          type: integer
+          example: 3
+        first_name:
+          type: string
+          example: Ashley
+        last_name:
+          type: string
+          example: Williams
+        email:
+          type: string
+          format: email
+          example: ashley.williams@mmu.ac.uk
+    Users:
+      type: array
+      items:
+        $ref: "#/components/schemas/User"
+    AddUser:
+      required:
+        - email
+        - first_name
+        - last_name
+        - password
+      type: object
+      properties:
+        first_name:
+          type: string
+          example: Ashley
+        last_name:
+          type: string
+          example: Williams
+        email:
+          type: string
+          format: email
+          example: ashley.williams@mmu.ac.uk
+        password:
+          type: string
+          example: hello123
+    AddUserResponse:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          example: 14
+    LoginUser:
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: ashley.williams@mmu.ac.uk
+        password:
+          type: string
+          example: hello123
+    LoginResponse:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          example: 14
+        session_token:
+          type: string
+          example: b5d9e7be6c97aa855f721b6e742120f2
+    Articles:
+      type: array
+      items:
+        $ref: "#/components/schemas/SingleArticle"
+    AddArticle:
+      required:
+        - article_text
+        - author
+        - title
+      type: object
+      properties:
+        title:
+          type: string
+          example: 5 Best Blog Engines
+        author:
+          type: string
+          example: Megan
+        article_text:
+          type: string
+          example: This is the articles main body text.
+    AddArticleResponse:
+      type: object
+      properties:
+        article_id:
+          type: integer
+          example: 14
+    SingleArticle:
+      required:
+        - article_id
+        - article_text
+        - author
+        - date_edited
+        - date_published
+        - title
+      type: object
+      properties:
+        article_id:
+          type: integer
+          example: 7
+        title:
+          type: string
+          example: 5 Best Blog Engines
+        author:
+          type: string
+          example: Megan
+        date_published:
+          type: string
+          format: date
+          example: 2022-08-04
+        date_edited:
+          type: string
+          format: date
+          example: 2022-09-24
+        article_text:
+          type: string
+          example: This is the articles main body text.
+    UpdateArticle:
+      required:
+        - article_text
+        - author
+        - title
+      type: object
+      properties:
+        title:
+          type: string
+          example: 5 Best Blog Engines
+        author:
+          type: string
+          example: Megan
+        article_text:
+          type: string
+          example: This is the articles main body text.
+    Comments:
+      type: array
+      items:
+        $ref: "#/components/schemas/SingleComment"
+    SingleComment:
+      required:
+        - comment_id
+        - comment_text
+        - date_published
+      type: object
+      properties:
+        comment_id:
+          type: integer
+          example: 982
+        date_published:
+          type: string
+          format: date
+          example: 2022-08-14
+        comment_text:
+          type: string
+          example: Great article. Loved it.
+    AddComment:
+      required:
+        - comment_text
+      type: object
+      properties:
+        comment_text:
+          type: string
+          example: Great article. Loved it.
+    AddCommentResponse:
+      type: object
+      properties:
+        comment_id:
+          type: integer
+          example: 14
+  parameters:
+    user_id:
+      name: user_id
+      in: path
+      description: A unique integer ID for identifying a User
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: integer
+    article_id:
+      name: article_id
+      in: path
+      description: A unique integer ID for identifying a Article
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: integer
+    comment_id:
+      name: comment_id
+      in: path
+      description: A unique integer ID for identifying a Comment
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: integer
+  securitySchemes:
+    User:
+      type: apiKey
+      name: X-Authorization
+      in: header

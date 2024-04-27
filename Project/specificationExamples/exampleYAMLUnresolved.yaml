@@ -1,0 +1,29 @@
+openapi: 3.0.0
+info:
+  title: Sample API
+  version: 1.0.0
+paths:
+  /items:
+    get:
+      summary: Get items
+      parameters:
+        - name: X-Request-ID
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Request ID
+      responses:
+        '200':
+          description: A list of items.
+          headers:
+            X-Response-Time:
+              description: The time it took to generate the response
+              schema:
+                type: string
+components:
+  headers:
+    X-Global-Header:
+      description: A header that is used across multiple endpoints
+      schema:
+        type: string

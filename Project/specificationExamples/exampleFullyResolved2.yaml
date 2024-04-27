@@ -1,0 +1,67 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: API with various schema scenarios
+paths:
+  /users:
+    get:
+      parameters:
+        - name: X-Api-Key
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-RateLimit-Limit:
+              description: The number of allowed requests in the current period
+              schema:
+                type: integer
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server Error
+      security:
+        - User: []
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+            examples:
+              Jessica:
+                summary: A sample user
+                externalValue: 'http://example.com/jessica.json'
+                headers:
+                  X-Foo: Bar
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      security:
+        - User: []
+        - Admin: []
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+  securitySchemes:
+    User:
+      type: apiKey
+      in: header
+      name: X-Api-Key
+    Admin:
+      type: apiKey
+      in: header
+      name: X-Admin-Key
