@@ -65,6 +65,6 @@ export async function main(yourSpecifciationYAMLFile) {
   }
 }
 
-main(yourSpecifciationYAMLFile);
+
 
 
