@@ -8,11 +8,9 @@ import * as datageneration from "./mockDataGeneration.js";
 import * as yamlInteract from "./yamlInteract.js";
 import * as fileHandler from "./fileHandling.js";
 import * as main from "./main.js";
-import $RefParser from "json-schema-ref-parser";
 
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
-import { writeFileSync, mkdirSync, existsSync, rmdirSync } from "fs";
+
+
 
 
 let variablesForAllTests = {};

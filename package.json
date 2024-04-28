@@ -11,5 +11,23 @@
     "path": "^0.12.7",
     "statushttp": "^1.0.4",
     "url": "^0.11.3"
-  }
+  },
+  "name": "restapitestgen",
+  "version": "1.0.0",
+  "main": "RestAPITestGen\\main.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HamzaArshad-os/restapitestgen.git"
+  },
+  "author": "Hamza S Arshad",
+  "license": "SEE LICENCE IN LICENCE",
+  "bugs": {
+    "url": "https://github.com/HamzaArshad-os/restapitestgen/issues"
+  },
+  "homepage": "https://github.com/HamzaArshad-os/restapitestgen#readme",
+  "description": ""
 }

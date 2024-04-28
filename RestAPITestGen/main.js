@@ -56,7 +56,7 @@ export async function main(yourSpecifciationYAMLFile) {
     //yamlInteract.printUniqueSecurityMap();
     //console.log(yamlInteract.iterateOverMapGetSpecificSection(yamlInteract.uniqueSchemaGenMockData, 'usage'));
     console.log("-----------------------");
-    console.log("Completed.. See generated files for Schemas retrived, gneerated mock data, generated bad mock data and test files.");
+    console.log("Completed.. See generated files for Schemas retrived, generated mock data, generated bad mock data and test files.  Found in node_modules>restapitestgen>GeneratedContent");
     console.log(
       "Note that this tool is designed to take information from an openapi specification, and generate Response and Response structure based tests. Cureently only have support for JSON mock data and Javascript Chai based tests. It can only retrive information from the specification. You will still need to make modfications to the test files to ensure they are correct for your use case."
     );
@@ -68,4 +68,4 @@ export async function main(yourSpecifciationYAMLFile) {
 
 
 
-main(yourSpecifciationYAMLFile);
+//main(yourSpecifciationYAMLFile);
