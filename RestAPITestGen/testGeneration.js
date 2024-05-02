@@ -72,34 +72,32 @@ export const testgenerationEntryPoint = (data) => {
           }
         }
         // handle the endpoint path
-        endpointForThisTestInsertedIntoTest = endpoint;
-        for (let parameterData of parametersData) {
-          let name = extractInfo(parameterData, "name");
-          let modifiedEndpoint = "";
+endpointForThisTestInsertedIntoTest = `"${endpoint}"`; // Wrap endpoint in double quotes
+for (let parameterData of parametersData) {
+  let name = extractInfo(parameterData, "name");
+  let modifiedEndpoint = "";
 
-          // Iterate over the usage array
-          for (let usage of parameterData.usage) {
-            let path = extractInfo(usage, "path");
-            //console.log(endpoint, method, response);
+  // Iterate over the usage array
+  for (let usage of parameterData.usage) {
+    let path = extractInfo(usage, "path");
 
-            let pathOrQuery = extractInfo(usage, "inPathOrQuery");
-            if (path === endpoint) {
-              if (pathOrQuery === "path") {
-                let modifiedPath = replacePathParametersWithVariables(path, names);
-                //console.log(path, modifiedPath);
-                modifiedEndpoint = modifiedPath;
-                // Assign modifiedEndpoint to endpointForThisTestInsertedIntoTest
-                endpointForThisTestInsertedIntoTest = modifiedEndpoint;
-              }
-              if (pathOrQuery === "query") {
-                let queryEntry = generateQueryString(name);
-                //console.log(queryEntry);
-                // Add queryEntry to queryForThisTestInsertedIntoTest
-                queryForThisTestInsertedIntoTest.push(queryEntry);
-              }
-            }
-          }
-        }
+    let pathOrQuery = extractInfo(usage, "inPathOrQuery");
+    if (path === endpoint) {
+      if (pathOrQuery === "path") {
+        let modifiedPath = replacePathParametersWithVariables(path, names);
+        modifiedEndpoint = modifiedPath;
+        // Assign modifiedEndpoint to endpointForThisTestInsertedIntoTest
+        endpointForThisTestInsertedIntoTest = modifiedEndpoint;
+      }
+      if (pathOrQuery === "query") {
+        let queryEntry = generateQueryString(name);
+        // Add queryEntry to queryForThisTestInsertedIntoTest
+        queryForThisTestInsertedIntoTest.push(queryEntry);
+      }
+    }
+  }
+}
+
 
         //hEADER
         // Separate request and response headers

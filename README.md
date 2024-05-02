@@ -1,4 +1,4 @@
-This is a tool that can be used by other devleopers to generate response and respnse structure valaidationtests for RESTAPIS given an openapi specificication(a3.0.0) in YAML format. 
+This is a tool that can be used by other devleopers to generate response and respnse structure valaidationtests for RESTAPIS given an openapi specificication(3.0.0) in YAML format. 
 
 Simply install node modules and this pacakge using npm install restapitestgen
 and import into your project.
