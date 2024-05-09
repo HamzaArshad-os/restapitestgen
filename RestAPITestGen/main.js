@@ -1,4 +1,3 @@
-
 import * as yamlInteract from "./yamlInteract.js";
 import * as testgenerator from "./testGeneration.js";
 import * as datageneration from "./mockDataGeneration.js";
@@ -14,19 +13,14 @@ export const setSchemasPath = (newPath) => {
   yamlInteract.endpoint_path = newPath;
 };
 
-
-
-
-  //Insert your specification here
-  //const yourSpecifciationYAMLFile = "Project/specificationExamples/petStoreSpec.yaml";
-  //const yourSpecifciationYAMLFile = "Project/specificationExamples/generalSpecification.yaml";
-  const yourSpecifciationYAMLFile = "Project/specificationExamples/tradingviewSpecResolvedOnly.yaml";
-  // const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleYAMLResolved.yaml";
-  // const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleFullyResolved2.yaml";
-  //const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleYAMLUnresolved.yaml";
-  //const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleYAMLResolved2MultiShema.yaml";
-
-
+//Insert your specification here
+//const yourSpecifciationYAMLFile = "Project/specificationExamples/petStoreSpec.yaml";
+//const yourSpecifciationYAMLFile = "Project/specificationExamples/generalSpecification.yaml";
+const yourSpecifciationYAMLFile = "Project/specificationExamples/tradingviewSpecResolvedOnly.yaml";
+// const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleYAMLResolved.yaml";
+// const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleFullyResolved2.yaml";
+//const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleYAMLUnresolved.yaml";
+//const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleYAMLResolved2MultiShema.yaml";
 
 export async function main(yourSpecifciationYAMLFile) {
   let yamlFile = yourSpecifciationYAMLFile;
@@ -34,8 +28,6 @@ export async function main(yourSpecifciationYAMLFile) {
   fileHandler.createSubDirectories();
 
   let data = "";
-
-
 
   try {
     console.log(
@@ -64,7 +56,5 @@ export async function main(yourSpecifciationYAMLFile) {
     console.error(error);
   }
 }
-
-
 
 //main(yourSpecifciationYAMLFile);
