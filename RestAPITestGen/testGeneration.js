@@ -336,7 +336,7 @@ export const edgecasePostPutPatchButNoExternalFileNeededTemplate = (data, unmodf
   javascriptTest += `\ndescribe('${description}', () => {\n`;
   javascriptTest += `  it('should return status ${response}', () => {\n`;
   javascriptTest += `    return chai\n`;
-  javascriptTest += `      .request('${url}')\n`;
+  javascriptTest += `      .request('url)\n`;
   javascriptTest += `      .${method}(${endpoint})\n`;
   javascriptTest += `      ${requestHeadersInsertedIntoTest}\n`;
   javascriptTest += `      .then((res) => {\n`;
@@ -383,7 +383,7 @@ export const jsGetDeleteTemplate = (data, unmodfiedEndpoint, endpoint, method, a
   javascriptTest += `\ndescribe('${description}', () => {\n`;
   javascriptTest += `  it('should return status ${response}', () => {\n`;
   javascriptTest += `    return chai\n`;
-  javascriptTest += `      .request('${url}')\n`;
+  javascriptTest += `      .request(url)\n`;
   javascriptTest += `      .${method}(${endpoint})\n`;
   javascriptTest += `      ${requestHeadersInsertedIntoTest}\n`;
   javascriptTest += `      .then((res) => {\n`;
@@ -430,10 +430,10 @@ export const jsPostPutPatchTemplate = (data, unmodfiedEndpoint, endpoint, method
   javascriptTest += `  before(() => {\n`;
   javascriptTest += `    console.log("[Script:  ${mockDataFilePath} ]");\n`;
   javascriptTest += `  });\n`;
-  javascriptTest += `  ${mockDataFilePath}.forEach((item) => {\n`; // Added opening bracket
+  javascriptTest += `  ${mockDataFilePath}.forEach((item) => {\n`;
   javascriptTest += `    it('Should return status ${response}: ', () => {\n`;
   javascriptTest += `      return chai\n`;
-  javascriptTest += `        .request('${url}')\n`;
+  javascriptTest += `        .request(url)\n`;
   javascriptTest += `        .${method}(${endpoint})\n`;
   javascriptTest += `        ${requestHeadersInsertedIntoTest}\n`;
   javascriptTest += `        .send(item)\n`;
