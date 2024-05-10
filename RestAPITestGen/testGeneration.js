@@ -202,8 +202,29 @@ export const testgenerationEntryPoint = (data) => {
         if (method === "put" || method === "patch" || method === "post") {
           //console.log(endpoint, method);
           //console.log(externalFilesUsedInThisFilesTests.length);
-          externalFilesUsedInThisFilesTests.forEach((filePathBeingInteractedWithForThisTest) => {
-            let test = jsPostPutPatchTemplate(
+          if (externalFilesUsedInThisFilesTests.length > 0) {
+            externalFilesUsedInThisFilesTests.forEach((filePathBeingInteractedWithForThisTest) => {
+              let test = jsPostPutPatchTemplate(
+                data,
+                endpoint,
+                endpointForThisTestInsertedIntoTest,
+                methodForThisTestInsertedIntoTest,
+                requestHeaderCodeInsertIntoTest,
+                response,
+                responseStructure,
+                responseHeaderCodeInsertIntoTest,
+                filePathBeingInteractedWithForThisTest,
+                sendString
+              );
+              //console.log(test);
+              if (test) {
+                newTestFileContent += test;
+              }
+            });
+          } else {
+            //handles that scnario wher eis put , patch , delete reuqest but no body or
+            //console.log(endpoint, method, resposneCode);
+            let edgecasetest = edgecasePostPutPatchButNoExternalFileNeededTemplate(
               data,
               endpoint,
               endpointForThisTestInsertedIntoTest,
@@ -211,15 +232,12 @@ export const testgenerationEntryPoint = (data) => {
               requestHeaderCodeInsertIntoTest,
               response,
               responseStructure,
-              responseHeaderCodeInsertIntoTest,
-              filePathBeingInteractedWithForThisTest,
-              sendString
+              responseHeaderCodeInsertIntoTest
             );
-            //console.log(test);
-            if (test) {
-              newTestFileContent += test;
+            if (edgecasetest) {
+              newTestFileContent += edgecasetest;
             }
-          });
+          }
         }
 
         // Increment the counter
@@ -286,6 +304,53 @@ export const getMethodInformation = (data, endpoint, method, info) => {
     //console.error(`Endpoint ${endpoint}, method ${method}, or information ${info} not found in the provided data.`);
     return null;
   }
+};
+
+export const edgecasePostPutPatchButNoExternalFileNeededTemplate = (data, unmodfiedEndpoint, endpoint, method, allRelevantHeaders, response, responseStructure, responseHeaders) => {
+  let [tags, summary, description, operationId, requestBody, responses, callbacks, deprecated, thiSecurity, responseStatusDescription] = handleOtherInfoGivenBySpec(
+    data,
+    unmodfiedEndpoint,
+    method,
+    response
+  );
+
+  let url = yamlInteract.getServerInfo(data)[0].url;
+  //console.log(url);
+  //console.log(allRelevantHeaders);
+  //console.log(responseHeaders);
+  let requestHeadersInsertedIntoTest = "";
+  if (allRelevantHeaders.length > 0) {
+    requestHeadersInsertedIntoTest = allRelevantHeaders.join("\n");
+  } else {
+    requestHeadersInsertedIntoTest = ".set()\n";
+  }
+  let responseHeadersInsertedIntoTest = "";
+  if (responseHeaders.length > 0) {
+    responseHeadersInsertedIntoTest = responseHeaders.join("\n");
+  } else {
+    responseHeadersInsertedIntoTest = "";
+  }
+  description = description.replace(/\n/g, " ");
+
+  let javascriptTest = "";
+  javascriptTest += `\ndescribe('${description}', () => {\n`;
+  javascriptTest += `  it('should return status ${response}', () => {\n`;
+  javascriptTest += `    return chai\n`;
+  javascriptTest += `      .request('${url}')\n`;
+  javascriptTest += `      .${method}(${endpoint})\n`;
+  javascriptTest += `      ${requestHeadersInsertedIntoTest}\n`;
+  javascriptTest += `      .then((res) => {\n`;
+  javascriptTest += `        expect(res).to.have.status(${response});\n`;
+  javascriptTest += `        ${responseHeadersInsertedIntoTest}\n`;
+  javascriptTest += `        ${responseStructure}\n`;
+  javascriptTest += `      })\n`;
+  javascriptTest += `      .catch((err) => {\n`;
+  javascriptTest += `        throw err;\n`;
+  javascriptTest += `      });\n`;
+  javascriptTest += `  });\n`;
+  javascriptTest += `});\n`;
+
+  return javascriptTest;
 };
 
 export const jsGetDeleteTemplate = (data, unmodfiedEndpoint, endpoint, method, allRelevantHeaders, response, responseStructure, responseHeaders) => {
