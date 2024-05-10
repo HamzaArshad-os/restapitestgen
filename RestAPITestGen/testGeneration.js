@@ -1,17 +1,9 @@
-
-
-
-
 import * as statushttp from "statushttp";
 
 import * as datageneration from "./mockDataGeneration.js";
 import * as yamlInteract from "./yamlInteract.js";
 import * as fileHandler from "./fileHandling.js";
 import * as main from "./main.js";
-
-
-
-
 
 let variablesForAllTests = {};
 
@@ -59,45 +51,44 @@ export const testgenerationEntryPoint = (data) => {
           //console.log("-------------------");
           //console.log(parameterData);
           let name = extractInfo(parameterData, "name");
-          
+
           let goodMockData = extractInfo(parameterData, "goodMockData");
-         // console.log(goodMockData);
+          // console.log(goodMockData);
           //console.log(goodMockData[0])
           let generatedVariable = jsGenerateParamterVariable(name, goodMockData[0]);
           if (generatedVariable) {
             if (generatedVariable) {
               topOfTestFile += generatedVariable;
             }
-             //console.log(generatedVariable);
+            //console.log(generatedVariable);
           }
         }
         // handle the endpoint path
-endpointForThisTestInsertedIntoTest = `"${endpoint}"`; // Wrap endpoint in double quotes
-for (let parameterData of parametersData) {
-  let name = extractInfo(parameterData, "name");
-  let modifiedEndpoint = "";
+        endpointForThisTestInsertedIntoTest = `"${endpoint}"`; // Wrap endpoint in double quotes
+        for (let parameterData of parametersData) {
+          let name = extractInfo(parameterData, "name");
+          let modifiedEndpoint = "";
 
-  // Iterate over the usage array
-  for (let usage of parameterData.usage) {
-    let path = extractInfo(usage, "path");
+          // Iterate over the usage array
+          for (let usage of parameterData.usage) {
+            let path = extractInfo(usage, "path");
 
-    let pathOrQuery = extractInfo(usage, "inPathOrQuery");
-    if (path === endpoint) {
-      if (pathOrQuery === "path") {
-        let modifiedPath = replacePathParametersWithVariables(path, names);
-        modifiedEndpoint = modifiedPath;
-        // Assign modifiedEndpoint to endpointForThisTestInsertedIntoTest
-        endpointForThisTestInsertedIntoTest = modifiedEndpoint;
-      }
-      if (pathOrQuery === "query") {
-        let queryEntry = generateQueryString(name);
-        // Add queryEntry to queryForThisTestInsertedIntoTest
-        queryForThisTestInsertedIntoTest.push(queryEntry);
-      }
-    }
-  }
-}
-
+            let pathOrQuery = extractInfo(usage, "inPathOrQuery");
+            if (path === endpoint) {
+              if (pathOrQuery === "path") {
+                let modifiedPath = replacePathParametersWithVariables(path, names);
+                modifiedEndpoint = modifiedPath;
+                // Assign modifiedEndpoint to endpointForThisTestInsertedIntoTest
+                endpointForThisTestInsertedIntoTest = modifiedEndpoint;
+              }
+              if (pathOrQuery === "query") {
+                let queryEntry = generateQueryString(name);
+                // Add queryEntry to queryForThisTestInsertedIntoTest
+                queryForThisTestInsertedIntoTest.push(queryEntry);
+              }
+            }
+          }
+        }
 
         //hEADER
         // Separate request and response headers
@@ -195,6 +186,7 @@ for (let parameterData of parametersData) {
         if (method === "get" || method === "delete") {
           let singleTest = jsGetDeleteTemplate(
             data,
+            endpoint,
             endpointForThisTestInsertedIntoTest,
             methodForThisTestInsertedIntoTest,
             requestHeaderCodeInsertIntoTest,
@@ -206,12 +198,14 @@ for (let parameterData of parametersData) {
           if (singleTest) {
             newTestFileContent += singleTest;
           }
-        } else {
+        }
+        if (method === "put" || method === "patch" || method === "post") {
+          //console.log(endpoint, method);
           //console.log(externalFilesUsedInThisFilesTests.length);
           externalFilesUsedInThisFilesTests.forEach((filePathBeingInteractedWithForThisTest) => {
-            //console.log(filePathBeingInteractedWithForThisTest);
             let test = jsPostPutPatchTemplate(
               data,
+              endpoint,
               endpointForThisTestInsertedIntoTest,
               methodForThisTestInsertedIntoTest,
               requestHeaderCodeInsertIntoTest,
@@ -286,6 +280,7 @@ export const getStatusDescription = (statusCode) => {
 
 export const getMethodInformation = (data, endpoint, method, info) => {
   if (data[yamlInteract.endpoint_path][endpoint] && data[yamlInteract.endpoint_path][endpoint][method] && data[yamlInteract.endpoint_path][endpoint][method].hasOwnProperty(info)) {
+    // console.log(data[yamlInteract.endpoint_path][endpoint][method][info]);
     return data[yamlInteract.endpoint_path][endpoint][method][info];
   } else {
     //console.error(`Endpoint ${endpoint}, method ${method}, or information ${info} not found in the provided data.`);
@@ -293,8 +288,13 @@ export const getMethodInformation = (data, endpoint, method, info) => {
   }
 };
 
-export const jsGetDeleteTemplate = (data, endpoint, method, allRelevantHeaders, response, responseStructure, responseHeaders) => {
-  let [tags, summary, description, operationId, requestBody, responses, callbacks, deprecated, thiSecurity, responseStatusDescription] = handleOtherInfoGivenBySpec(data, endpoint, method, response);
+export const jsGetDeleteTemplate = (data, unmodfiedEndpoint, endpoint, method, allRelevantHeaders, response, responseStructure, responseHeaders) => {
+  let [tags, summary, description, operationId, requestBody, responses, callbacks, deprecated, thiSecurity, responseStatusDescription] = handleOtherInfoGivenBySpec(
+    data,
+    unmodfiedEndpoint,
+    method,
+    response
+  );
 
   let url = yamlInteract.getServerInfo(data)[0].url;
   //console.log(url);
@@ -334,8 +334,13 @@ export const jsGetDeleteTemplate = (data, endpoint, method, allRelevantHeaders, 
 
   return javascriptTest;
 };
-export const jsPostPutPatchTemplate = (data, endpoint, method, allRelevantHeaders, response, responseStructure, responseHeaders, mockDataFilePath, setTestCode) => {
-  let [tags, summary, description, operationId, requestBody, responses, callbacks, deprecated, thiSecurity, responseStatusDescription] = handleOtherInfoGivenBySpec(data, endpoint, method, response);
+export const jsPostPutPatchTemplate = (data, unmodfiedEndpoint, endpoint, method, allRelevantHeaders, response, responseStructure, responseHeaders, mockDataFilePath, setTestCode) => {
+  let [tags, summary, description, operationId, requestBody, responses, callbacks, deprecated, thiSecurity, responseStatusDescription] = handleOtherInfoGivenBySpec(
+    data,
+    unmodfiedEndpoint,
+    method,
+    response
+  );
 
   // Remove newline characters from the description
   description = description.replace(/\n/g, " ");
@@ -358,7 +363,7 @@ export const jsPostPutPatchTemplate = (data, endpoint, method, allRelevantHeader
   let javascriptTest = "";
   javascriptTest += `\ndescribe('${description}', () => {\n`;
   javascriptTest += `  before(() => {\n`;
-  javascriptTest += `    console.log("[Script: " + ${mockDataFilePath} + "]");\n`;
+  javascriptTest += `    console.log("[Script:  ${mockDataFilePath} ]");\n`;
   javascriptTest += `  });\n`;
   javascriptTest += `  ${mockDataFilePath}.forEach((item) => {\n`; // Added opening bracket
   javascriptTest += `    it('Should return status ${response}: ', () => {\n`;
@@ -461,7 +466,6 @@ export const jsGenerateParamterVariable = (name, mockData) => {
     return null;
   }
 };
-
 
 export const jsGenerateMockDataPathVariable = (name, mockDatapath) => {
   // Ensure mockDatapath is a string
@@ -566,7 +570,7 @@ function generateQueryString(name) {
 export const javascriptTestTopOfFile = (data) => {
   let javascripttesTopOfFile = "";
   //javascripttesTopOfFile +=  ` \n`;
-  javascripttesTopOfFile += `//Please make sure the correct Libaries are installed\n`;
+  javascripttesTopOfFile += `//Please make sure the correct Libaries are installed . Addionally note that if there are no test sin this file it is due to the tests being post/put/patch based but no expected response body\n`;
   javascripttesTopOfFile += `const fs = require("fs");\n`;
   javascripttesTopOfFile += `const chai = require("chai");\n`;
   javascripttesTopOfFile += `const chaiHttp = require("chai-http");\n`;

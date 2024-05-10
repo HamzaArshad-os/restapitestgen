@@ -16,8 +16,8 @@ export const setSchemasPath = (newPath) => {
 //Insert your specification here
 //const yourSpecifciationYAMLFile = "Project/specificationExamples/petStoreSpec.yaml";
 //const yourSpecifciationYAMLFile = "Project/specificationExamples/generalSpecification.yaml";
-const yourSpecifciationYAMLFile = "Project/specificationExamples/tradingviewSpecResolvedOnly.yaml";
-// const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleYAMLResolved.yaml";
+//const yourSpecifciationYAMLFile = "Project/specificationExamples/tradingviewSpecResolvedOnly.yaml";
+const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleYAMLResolved.yaml";
 // const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleFullyResolved2.yaml";
 //const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleYAMLUnresolved.yaml";
 //const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleYAMLResolved2MultiShema.yaml";
