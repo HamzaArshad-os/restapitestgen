@@ -306,6 +306,11 @@ export const getMethodInformation = (data, endpoint, method, info) => {
   }
 };
 
+function getDescriptionFromResponse(spec, path, method, response) {
+  let description = spec.paths[path][method].responses[response].description;
+  return description ? description : null;
+}
+
 export const edgecasePostPutPatchButNoExternalFileNeededTemplate = (data, unmodfiedEndpoint, endpoint, method, allRelevantHeaders, response, responseStructure, responseHeaders) => {
   let [tags, summary, description, operationId, requestBody, responses, callbacks, deprecated, thiSecurity, responseStatusDescription] = handleOtherInfoGivenBySpec(
     data,
@@ -333,10 +338,15 @@ export const edgecasePostPutPatchButNoExternalFileNeededTemplate = (data, unmodf
   description = description.replace(/\n/g, " ");
 
   let javascriptTest = "";
-  javascriptTest += `\ndescribe('${description}', () => {\n`;
+  let responseDescription = getDescriptionFromResponse(data, unmodfiedEndpoint, method, response);
+  if (responseDescription) {
+    javascriptTest += `\ndescribe('${responseDescription} for ${description}', () => {\n`;
+  } else {
+    javascriptTest += `\ndescribe('This should not work/throw an error as non 2XX response expected :${description}', () => {\n`;
+  }
   javascriptTest += `  it('should return status ${response}', () => {\n`;
   javascriptTest += `    return chai\n`;
-  javascriptTest += `      .request('url)\n`;
+  javascriptTest += `      .request(url)\n`;
   javascriptTest += `      .${method}(${endpoint})\n`;
   javascriptTest += `      ${requestHeadersInsertedIntoTest}\n`;
   javascriptTest += `      .then((res) => {\n`;
@@ -380,7 +390,13 @@ export const jsGetDeleteTemplate = (data, unmodfiedEndpoint, endpoint, method, a
   description = description.replace(/\n/g, " ");
 
   let javascriptTest = "";
-  javascriptTest += `\ndescribe('${description}', () => {\n`;
+  let responseDescription = getDescriptionFromResponse(data, unmodfiedEndpoint, method, response);
+  if (responseDescription) {
+    javascriptTest += `\ndescribe('${responseDescription} for ${description}', () => {\n`;
+  } else {
+    javascriptTest += `\ndescribe('This should not work/throw an error as non 2XX response expected :${description}', () => {\n`;
+  }
+
   javascriptTest += `  it('should return status ${response}', () => {\n`;
   javascriptTest += `    return chai\n`;
   javascriptTest += `      .request(url)\n`;
@@ -426,7 +442,12 @@ export const jsPostPutPatchTemplate = (data, unmodfiedEndpoint, endpoint, method
   }
 
   let javascriptTest = "";
-  javascriptTest += `\ndescribe('${description}', () => {\n`;
+  let responseDescription = getDescriptionFromResponse(data, unmodfiedEndpoint, method, response);
+  if (responseDescription) {
+    javascriptTest += `\ndescribe('${responseDescription} for ${description}', () => {\n`;
+  } else {
+    javascriptTest += `\ndescribe('This should not work/throw an error as non 2XX response expected :${description}', () => {\n`;
+  }
   javascriptTest += `  before(() => {\n`;
   javascriptTest += `    console.log("[Script:  ${mockDataFilePath} ]");\n`;
   javascriptTest += `  });\n`;
