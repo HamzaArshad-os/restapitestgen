@@ -13,7 +13,7 @@
     "url": "^0.11.3"
   },
   "name": "restapitestgen",
-  "version": "1.0.238",
+  "version": "1.0.239",
   "main": "RestAPITestGen\\main.js",
   "devDependencies": {},
   "scripts": {

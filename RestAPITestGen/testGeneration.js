@@ -319,7 +319,7 @@ export const edgecasePostPutPatchButNoExternalFileNeededTemplate = (data, unmodf
     response
   );
 
-  let url = yamlInteract.getServerInfo(data)[0].url;
+  //let url = yamlInteract.getServerInfo(data)[0].url;
   //console.log(url);
   //console.log(allRelevantHeaders);
   //console.log(responseHeaders);
@@ -371,7 +371,7 @@ export const jsGetDeleteTemplate = (data, unmodfiedEndpoint, endpoint, method, a
     response
   );
 
-  let url = yamlInteract.getServerInfo(data)[0].url;
+  //let url = yamlInteract.getServerInfo(data)[0].url;
   //console.log(url);
   //console.log(allRelevantHeaders);
   //console.log(responseHeaders);
@@ -415,6 +415,7 @@ export const jsGetDeleteTemplate = (data, unmodfiedEndpoint, endpoint, method, a
 
   return javascriptTest;
 };
+
 export const jsPostPutPatchTemplate = (data, unmodfiedEndpoint, endpoint, method, allRelevantHeaders, response, responseStructure, responseHeaders, mockDataFilePath, setTestCode) => {
   let [tags, summary, description, operationId, requestBody, responses, callbacks, deprecated, thiSecurity, responseStatusDescription] = handleOtherInfoGivenBySpec(
     data,
@@ -426,7 +427,7 @@ export const jsPostPutPatchTemplate = (data, unmodfiedEndpoint, endpoint, method
   // Remove newline characters from the description
   description = description.replace(/\n/g, " ");
 
-  let url = yamlInteract.getServerInfo(data)[0].url;
+  //let url = yamlInteract.getServerInfo(data)[0].url;
 
   let requestHeadersInsertedIntoTest = "";
   if (allRelevantHeaders.length > 0) {
@@ -457,7 +458,7 @@ export const jsPostPutPatchTemplate = (data, unmodfiedEndpoint, endpoint, method
   javascriptTest += `        .request(url)\n`;
   javascriptTest += `        .${method}(${endpoint})\n`;
   javascriptTest += `        ${requestHeadersInsertedIntoTest}\n`;
-  javascriptTest += `        .send(item)\n`;
+  //javascriptTest += `        .send(item)\n`;
   javascriptTest += `        ${setTestCode}\n`;
   javascriptTest += `        .then((res) => {\n`;
   javascriptTest += `          expect(res).to.have.status(${response});\n`;
@@ -656,7 +657,7 @@ function generateQueryString(name) {
 export const javascriptTestTopOfFile = (data) => {
   let javascripttesTopOfFile = "";
   //javascripttesTopOfFile +=  ` \n`;
-  javascripttesTopOfFile += `//Please make sure the correct Libaries are installed . Addionally note that if there are no test sin this file it is due to the tests being post/put/patch based but no expected response body\n`;
+  javascripttesTopOfFile += `//Please make sure the correct Libaries are installed. Please check invidual tests.\n`;
   javascripttesTopOfFile += `const fs = require("fs");\n`;
   javascripttesTopOfFile += `const chai = require("chai");\n`;
   javascripttesTopOfFile += `const chaiHttp = require("chai-http");\n`;

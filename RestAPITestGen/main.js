@@ -13,12 +13,18 @@ export const setSchemasPath = (newPath) => {
   yamlInteract.endpoint_path = newPath;
 };
 
+export async function printCondensedList(yamlFile) {
+  let fullist = await yamlInteract.generateCondensedDataList(yamlFile);
+  //console.log(JSON.stringify(fullist, null, 2));
+  console.log(fullist);
+}
+
 //Insert your specification here
 //const yourSpecifciationYAMLFile = "Project/specificationExamples/petStoreSpec.yaml";
 //const yourSpecifciationYAMLFile = "Project/specificationExamples/generalSpecification.yaml";
 //const yourSpecifciationYAMLFile = "Project/specificationExamples/tradingviewSpecResolvedOnly.yaml";
-const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleYAMLResolved.yaml";
-// const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleFullyResolved2.yaml";
+//const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleYAMLResolved.yaml";
+const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleFullyResolved2.yaml";
 //const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleYAMLUnresolved.yaml";
 //const yourSpecifciationYAMLFile = "Project/specificationExamples/exampleYAMLResolved2MultiShema.yaml";
 
@@ -57,4 +63,5 @@ export async function main(yourSpecifciationYAMLFile) {
   }
 }
 
+//printCondensedList(yourSpecifciationYAMLFile);
 //main(yourSpecifciationYAMLFile);

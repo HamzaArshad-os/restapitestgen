@@ -6,7 +6,7 @@ import * as datageneration from "./mockDataGeneration.js";
 import * as testHandler from "./testGeneration.js";
 import * as fileHandler from "./fileHandling.js";
 import $RefParser from "json-schema-ref-parser";
- 
+
 let schemaCounter = 0;
 export let uniqueSchemaGenMockData = new Map(); //Holds all unique schemas
 export let uniqueSecurityMap = new Map(); //Holds all unique security schemes
@@ -515,7 +515,8 @@ function getSchemaName(schema, section, spec) {
   return schemaName;
 }
 
-export const generateCondensedDataList = (data) => {
+export async function generateCondensedDataList(yamlFile) {
+  let data = await readAndPreprocessYamlFile(yamlFile);
   let endpointList = {};
 
   for (let path in data[endpoint_path]) {
@@ -529,7 +530,7 @@ export const generateCondensedDataList = (data) => {
   }
 
   return endpointList;
-};
+}
 
 function validateSchema(schema) {
   try {
